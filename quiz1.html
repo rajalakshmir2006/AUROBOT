@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychological Questionnaire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f2ff; /* light lavender background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      background-color: #e756f48d;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #050505;
+    }
+
+    p.description {
+      text-align: center;
+      font-style: italic;
+      color: #050505;
+      margin-bottom: 1.5rem;
+    }
+
+    label, legend {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #999;
+      margin-bottom: 1rem;
+    }
+
+    fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    label.radio-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      border-color: rgba(0,0,0,0.3);
+      opacity: 0.6;
+    }
+
+    button.next {
+      background-color: #3701fb;
+      border-color: #3701fb;
+      color: #fff;
+    }
+
+    button.back {
+      background-color: #0140ff;
+      border-color: #0140ff;
+      color: #fff;
+    }
+
+    button.submit {
+      background-color: #f90505;
+      border-color: #f90505;
+      color: #fff;
+    }
+
+    .step-indicator {
+      text-align: center;
+      color: #444;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Psychological Questionnaire</h1>
+    <p class="description">Your responses are confidential and help us understand your well-being.</p>
+    <p class="step-indicator" id="step-indicator">Step 1 of 5</p>
+
+    <div id="question-container"></div>
+
+    <div class="buttons">
+      <button class="back" id="backBtn" disabled>Back</button>
+      <button class="next" id="nextBtn" disabled>Next</button>
+      <button class="submit" id="submitBtn" style="display:none;">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { type: 'textarea', text: '1. What difficulty did you face recently?', key: 'q1' },
+      { type: 'radio', text: '2. Do you prefer talking about it to someone?', key: 'q2', options: ['Yes', 'No'] },
+      { type: 'radio', text: '3. What is your hobby or stress reliever?', key: 'q3', options: ['Dance','Music','Drawing','Sports','Reading','Gaming','Other'] },
+      { type: 'text', text: '', key: 'q4' }, // adaptive
+      { type: 'radio', text: '5. Do you feel safe and supported in your school/college?', key: 'q5', options: ['Yes', 'No'] },
+    ];
+
+    const answers = { q1:'', q2:'', q3:'', q4:'', q5:'' };
+    let step = 0;
+
+    const container = document.getElementById('question-container');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const stepIndicator = document.getElementById('step-indicator');
+
+    function getQ4Text() {
+      switch(answers.q3) {
+        case 'Dance': return 'What style of dance do you enjoy?';
+        case 'Music': return 'What genre of music do you prefer?';
+        case 'Drawing': return 'What type of drawing do you like most?';
+        case 'Sports': return 'Which sport do you play or follow?';
+        case 'Reading': return 'What type of books do you read?';
+        case 'Gaming': return 'What kind of games do you like?';
+        case 'Other': return 'Please describe your stress-relieving activity.';
+        default: return 'Please answer the previous question first.';
+      }
+    }
+
+    function renderStep() {
+      container.innerHTML = '';
+      stepIndicator.textContent = `Step ${step+1} of ${questions.length}`;
+      nextBtn.style.display = step === questions.length-1 ? 'none' : 'inline-block';
+      submitBtn.style.display = step === questions.length-1 ? 'inline-block' : 'none';
+      backBtn.disabled = step === 0;
+      nextBtn.disabled = true;
+
+      let q = questions[step];
+      if (q.key === 'q4') {
+        q.text = getQ4Text();
+      }
+
+      if (q.type === 'textarea') {
+        const label = document.createElement('label');
+        label.textContent = q.text;
+        const textarea = document.createElement('textarea');
+        textarea.rows = 4;
+        textarea.value = answers[q.key];
+        textarea.addEventListener('input', e => {
+          answers[q.key] = e.target.value;
+          nextBtn.disabled = answers[q.key].trim() === '';
+        });
+        container.appendChild(label);
+        container.appendChild(textarea);
+        nextBtn.disabled = answers[q.key].trim() === '';
+      } else if (q.type === 'text') {
+        const label = document.createElement('label');
+        label.textContent = q.text;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = answers[q.key];
+        input.addEventListener('input', e => {
+          answers[q.key] = e.target.value;
+          nextBtn.disabled = answers[q.key].trim() === '';
+        });
+        container.appendChild(label);
+        container.appendChild(input);
+        nextBtn.disabled = answers[q.key].trim() === '';
+      } else if (q.type === 'radio') {
+        const fieldset = document.createElement('fieldset');
+        const legend = document.createElement('legend');
+        legend.textContent = q.text;
+        fieldset.appendChild(legend);
+        q.options.forEach(opt => {
+          const label = document.createElement('label');
+          label.textContent = opt;
+          label.className = 'radio-label';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = q.key;
+          radio.value = opt;
+          radio.checked = answers[q.key] === opt;
+          radio.addEventListener('change', e => {
+            answers[q.key] = e.target.value;
+            nextBtn.disabled = false;
+          });
+          label.prepend(radio);
+          fieldset.appendChild(label);
+        });
+        container.appendChild(fieldset);
+        nextBtn.disabled = answers[q.key] === '';
+      }
+    }
+
+    backBtn.addEventListener('click', () => {
+      if(step>0) step--;
+      renderStep();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if(step < questions.length - 1) {
+        step++;
+        renderStep();
+      }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      console.log("Submitted answers:", answers);
+      alert('✅ Thank you for completing the questionnaire! Your answers have been submitted.');
+    });
+
+    renderStep();
+  </script>
+
+</body>
+</html>
+
