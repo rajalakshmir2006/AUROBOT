@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Psychological Questionnaries</title>
+  <style>
+    :root{
+      --card-bg: #f27ff28d;
+      --accent: #4d02f9;
+      --lav1: #f9f8fb;
+      --lav2: #c8b9f3;
+      --text: #080808;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{
+      background: linear-gradient(135deg,var(--lav1),var(--lav2));
+      display:flex;align-items:center;justify-content:center;padding:32px;
+    }
+    .container{
+      width:100%;max-width:720px;background:var(--card-bg);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(25,20,50,0.12);backdrop-filter: blur(6px);
+    }
+    header{ text-align:center;margin-bottom:12px }
+    h1{margin:0;font-size:1.6rem;color:var(--text);letter-spacing:0.2px}
+    p.subtitle{margin:6px 0 18px;color:#4b4b6a}
+
+    .question{display:none;gap:16px;align-items:flex-start}
+    .question.active{display:flex;flex-direction:column}
+    .q-text{font-weight:600;margin-bottom:8px}
+    .options{display:flex;flex-direction:column;gap:8px}
+    .option{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+    .option input{accent-color:var(--accent)}
+    .option:hover{transform:translateY(-2px)}
+    .option.selected{border-color:rgba(108,99,255,0.22);box-shadow:0 6px 18px rgba(108,99,255,0.08)}
+
+    .nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+    .buttons{display:flex;gap:10px}
+    button{background:var(--accent);color:#f5efef;border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 6px 18px rgba(108,99,255,0.12)}
+    button[disabled]{opacity:0.45;cursor:not-allowed;box-shadow:none}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(108,99,255,0.12)}
+
+    /* avatar area for Q5 */
+    .avatar-wrap{display:flex;gap:18px;align-items:center}
+    .avatar{
+      width:96px;height:96px;border-radius:50%;background:linear-gradient(180deg,#f4f7f5,#f6f6ff);display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 8px 20px rgba(40,30,90,0.06);
+      transition:transform 300ms ease, box-shadow 300ms ease;
+    }
+    .avatar.smile{transform:translateY(-6px)}
+    .avatar.thought{transform:rotate(-6deg)}
+    .avatar.storm{transform:scale(1.05)}
+    .avatar.calm{transform:translateY(2px)}
+
+    .result{display:none;text-align:center;padding:24px}
+    .result.show{display:block}
+
+    /* small responsive tweaks */
+    @media (max-width:520px){.avatar{width:72px;height:72px;font-size:30px}}
+
+  </style>
+</head>
+<body>
+  <div class="container" role="application">
+    <header>
+      <h1>Psychological Questionnaries</h1>
+      <p class="subtitle">A short check-in — pick one answer per question, then submit.</p>
+    </header>
+
+    <main>
+      <form id="quiz" autocomplete="off" onsubmit="return false">
+
+        <!-- Q1 -->
+        <section class="question active" data-q="1" aria-hidden="false">
+          <div class="q-text">1. How much have you enjoyed the little things (like music, food, or talking to someone) in the past few days?</div>
+          <div class="options" role="radiogroup" aria-labelledby="q1">
+            <label class="option"><input type="radio" name="q1" value="Not at all">Not at all</label>
+            <label class="option"><input type="radio" name="q1" value="A little">A little</label>
+            <label class="option"><input type="radio" name="q1" value="Somewhat">Somewhat</label>
+            <label class="option"><input type="radio" name="q1" value="Quite a lot">Quite a lot</label>
+            <label class="option"><input type="radio" name="q1" value="Very much">Very much</label>
+          </div>
+        </section>
+
+        <!-- Q2 -->
+        <section class="question" data-q="2">
+          <div class="q-text">2. When you wake up in the morning, how ready do you feel to start your day?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="q2" value="Very tired">Very tired</label>
+            <label class="option"><input type="radio" name="q2" value="A little tired">A little tired</label>
+            <label class="option"><input type="radio" name="q2" value="Neutral">Neutral</label>
+            <label class="option"><input type="radio" name="q2" value="Energetic">Energetic</label>
+            <label class="option"><input type="radio" name="q2" value="Very energetic">Very energetic</label>
+          </div>
+        </section>
+
+        <!-- Q3 -->
+        <section class="question" data-q="3">
+          <div class="q-text">3. How often do you catch your mind wandering or finding it hard to stay focused?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="q3" value="Never">Never</label>
+            <label class="option"><input type="radio" name="q3" value="Rarely">Rarely</label>
+            <label class="option"><input type="radio" name="q3" value="Sometimes">Sometimes</label>
+            <label class="option"><input type="radio" name="q3" value="Often">Often</label>
+            <label class="option"><input type="radio" name="q3" value="Almost Always">Almost Always</label>
+          </div>
+        </section>
+
+        <!-- Q4 -->
+        <section class="question" data-q="4">
+          <div class="q-text">4. When was the last time you felt truly connected or supported by someone?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="q4" value="Today">Today</label>
+            <label class="option"><input type="radio" name="q4" value="This week">This week</label>
+            <label class="option"><input type="radio" name="q4" value="Last few weeks">Last few weeks</label>
+            <label class="option"><input type="radio" name="q4" value="Longer">Longer</label>
+            <label class="option"><input type="radio" name="q4" value="I can’t remember">I can’t remember</label>
+          </div>
+        </section>
+
+        <!-- Q5 (weather + avatar) -->
+        <section class="question" data-q="5">
+          <div class="q-text">5. If your emotions were weather today, which one fits best?</div>
+          <div class="avatar-wrap">
+            <div class="avatar" id="avatar" aria-hidden="true">🙂</div>
+            <div class="options" id="q5opts">
+              <label class="option"><input type="radio" name="q5" value="Sunny">Sunny ☀️</label>
+              <label class="option"><input type="radio" name="q5" value="Cloudy">Cloudy ☁️</label>
+              <label class="option"><input type="radio" name="q5" value="Stormy">Stormy ⛈️</label>
+              <label class="option"><input type="radio" name="q5" value="Calm breeze">Calm breeze 🌬️</label>
+            </div>
+          </div>
+        </section>
+
+        <div class="nav">
+          <div class="progress" id="progress">Question 1 of 5</div>
+          <div class="buttons">
+            <button type="button" id="backBtn" class="ghost" disabled>Back</button>
+            <button type="button" id="nextBtn" disabled>Next</button>
+            <button type="submit" id="submitBtn" style="display:none;">Submit</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="result" id="result">
+        <h2>Your answers have been submitted successfully ✅</h2>
+        <p style="color:#4b4b6a">Thank you for completing the check-in.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const questions = Array.from(document.querySelectorAll('.question'));
+    let idx = 0;
+    const nextBtn = document.getElementById('nextBtn');
+    const backBtn = document.getElementById('backBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const progress = document.getElementById('progress');
+    const result = document.getElementById('result');
+    const avatar = document.getElementById('avatar');
+
+    function showQuestion(i){
+      questions.forEach((q, qi)=>{
+        q.classList.toggle('active', qi===i);
+        q.setAttribute('aria-hidden', qi===i ? 'false' : 'true');
+      });
+      backBtn.disabled = i===0;
+      nextBtn.style.display = i===questions.length-1 ? 'none' : '';
+      submitBtn.style.display = i===questions.length-1 ? '' : 'none';
+      updateProgress();
+      checkSelection();
+    }
+
+    function updateProgress(){
+      progress.textContent = `Question ${idx+1} of ${questions.length}`;
+    }
+
+    function checkSelection(){
+      const q = questions[idx];
+      const checked = q.querySelector('input[type=radio]:checked');
+      nextBtn.disabled = !checked && idx < questions.length-1;
+      submitBtn.disabled = !checked && idx === questions.length-1;
+      // highlight selected option
+      q.querySelectorAll('.option').forEach(label=>{
+        const input = label.querySelector('input');
+        label.classList.toggle('selected', input.checked);
+      });
+    }
+
+    // attach listeners to radio inputs to enable next
+    document.querySelectorAll('input[type=radio]').forEach(inp =>{
+      inp.addEventListener('change', (e)=>{
+        // mark label selected
+        const label = inp.closest('.option');
+        // unselect siblings in same question
+        const group = inp.closest('.options');
+        group.querySelectorAll('.option').forEach(l=>l.classList.remove('selected'));
+        label.classList.add('selected');
+        checkSelection();
+
+        // if this is q5, animate avatar
+        const name = inp.name;
+        if(name === 'q5'){
+          switch(inp.value){
+            case 'Sunny': avatar.textContent = '😄'; avatar.className = 'avatar smile'; break;
+            case 'Cloudy': avatar.textContent = '🙂'; avatar.className = 'avatar thought'; break;
+            case 'Stormy': avatar.textContent = '😟'; avatar.className = 'avatar storm'; break;
+            case 'Calm breeze': avatar.textContent = '😌'; avatar.className = 'avatar calm'; break;
+            default: avatar.textContent = '🙂'; avatar.className = 'avatar';
+          }
+        }
+      });
+
+      // also allow clicking the whole label to toggle selection styling
+      const lab = inp.closest('.option');
+      lab.addEventListener('click', ()=>{
+        // clicked label will be handled by change event
+      });
+    });
+
+    nextBtn.addEventListener('click', ()=>{
+      if(idx < questions.length-1){idx++; showQuestion(idx);}    
+    });
+    backBtn.addEventListener('click', ()=>{
+      if(idx>0){idx--; showQuestion(idx);}    
+    });
+
+    submitBtn.addEventListener('click', ()=>{
+      // Do not display answers. Only show success message.
+      document.getElementById('quiz').style.display = 'none';
+      result.classList.add('show');
+      // optionally focus the result for accessibility
+      result.querySelector('h2').focus && result.querySelector('h2').focus();
+    });
+
+    // keyboard accessibility: press Enter on selected option to go next
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        const active = questions[idx];
+        if(active.querySelector('input[type=radio]:checked')){
+          if(idx === questions.length-1){ submitBtn.click(); }
+          else{ nextBtn.click(); }
+        }
+      }
+    });
+
+    // initial setup
+    showQuestion(idx);
+  </script>
+</body>
+</html>
+
